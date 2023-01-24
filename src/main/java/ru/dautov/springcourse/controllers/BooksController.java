@@ -40,7 +40,6 @@ public class BooksController {
         } else {
             model.addAttribute("books", bookService.findWithPagination(page, booksPerPage, sortByYear));
         }
-
         return "books/index";
     }
 
@@ -108,5 +107,16 @@ public class BooksController {
     public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson) {
         bookService.assign(id, selectedPerson);
         return "redirect:/books/" + id;
+    }
+
+    @GetMapping("/search")
+    public String searchPage() {
+        return "books/search";
+    }
+
+    @PostMapping("/search")
+    public String makeSearch(Model model, @RequestParam("query") String query) {
+        model.addAttribute("books", bookService.searchByTitle(query));
+        return "books/search";
     }
 }
