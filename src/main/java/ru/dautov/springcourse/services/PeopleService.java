@@ -9,6 +9,7 @@ import ru.dautov.springcourse.models.Person;
 import ru.dautov.springcourse.repositories.PeopleRepository;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,13 @@ public class PeopleService {
 
         if (person.isPresent()) {
             Hibernate.initialize(person.get().getBooks());
+
+            person.get().getBooks().forEach(book -> {
+                long diffInMillies = Math.abs(book.getTakenAt().getTime() - new Date().getTime());
+                // 864000000 милисекунд = 10 суток
+                if (diffInMillies > 864000000)
+                    book.setExpired(true); // книга просрочена
+            });
             return person.get().getBooks();
         } else {
             return Collections.emptyList();

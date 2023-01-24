@@ -9,6 +9,7 @@ import ru.dautov.springcourse.models.Book;
 import ru.dautov.springcourse.models.Person;
 import ru.dautov.springcourse.repositories.BooksRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,10 +72,12 @@ public class BookService {
         return booksRepository.findById(id).map(Book::getOwner).orElse(null);
     }
 
+    @Transactional
     public void release(int id) {
         booksRepository.findById(id).ifPresent(
                 book -> {
                     book.setOwner(null);
+                    book.setTakenAt(null);
                 }
         );
     }
@@ -82,7 +85,10 @@ public class BookService {
     @Transactional
     public void assign(int id, Person selectedPerson) {
         booksRepository.findById(id).ifPresent(
-                book -> book.setOwner(selectedPerson)
+                book -> {
+                    book.setOwner(selectedPerson);
+                    book.setTakenAt(new Date());
+                }
         );
     }
 
